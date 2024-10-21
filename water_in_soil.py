@@ -423,14 +423,14 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
 
     pressure_fig.update_layout(
     title=dict(
-        text='Pore Water Pressure with Depth',
+        text=None,
         x=0.5,  # Center the title horizontally
         y=0.98,  # Position the title above the plot area
         xanchor='center',
         yanchor='top',
         font=dict(size=20)  # Adjust the font size as needed
         ),
-        xaxis_title='Pore Water Pressure (Pa)',
+        xaxis_title='Stress/Pressure (kPa)',
         plot_bgcolor='white',
         xaxis = dict(
             side = 'top',
