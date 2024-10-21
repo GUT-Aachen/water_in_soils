@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objs as go
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
 
 # Add a hidden dcc.Store to track the window width
 # Updated layout with separate sections for sliders and layer properties
@@ -19,7 +19,7 @@ app.layout = html.Div([
     # Main container
     html.Div(style={'display': 'flex', 'flexDirection': 'row', 'width': '100%', 'height': '100vh'}, children=[
         # Control container (sliders)
-        html.Div(id='control-container', style={'width': '25%', 'padding': '10px', 'flexDirection': 'column'}, children=[
+        html.Div(id='control-container', style={'width': '30%', 'padding': '2%', 'flexDirection': 'column'}, children=[
             html.H1('Water in Soils', style={'textAlign': 'center'}, className='h1'),
 
             # Sliders for each layer
@@ -92,7 +92,7 @@ app.layout = html.Div([
                 dcc.Input(id='gama_2', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
                 html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
                 dcc.Input(id='gama_r_2', type='number', value=21, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ′ (kN/m³)'], className='input-label'),
+                html.Label([f'γ* (kN/m³)'], className='input-label'),
                 dcc.Input(id='gama_prime_2', type='number', value=None, step=0.01, style={'width': '12%'}, className='input-field', readOnly=True),
 
                 # Layer 3 Properties
@@ -106,6 +106,7 @@ app.layout = html.Div([
 
                 # equations
                 html.H3(children=[f'γ′  = γ', html.Sub('r'),  ' - γ', html.Sub('w')], style={'textAlign': 'left'}),
+                html.H3(children=[f'γ*  = γ′ ± (Δh/ΔL)γ', html.Sub('w')], style={'textAlign': 'left'}),
 
             ]),
         ]),
@@ -125,7 +126,7 @@ app.layout = html.Div([
             src='/assets/logo.png', className='logo',
             style={
                 'position': 'absolute',
-                'width': '250px',  # Adjust size as needed
+                'width': '15%',  # Adjust size as needed
                 'height': 'auto',
                 'z-index': '1000',  # Ensure it's on top of other elements
             }
@@ -136,13 +137,23 @@ app.layout = html.Div([
 # Callback to update γ′ based on γ_r values for each layer
 @app.callback(
     [Output(f'gama_prime_{i}', 'value') for i in range(1, 4)],
-    [Input(f'gama_r_{i}', 'value') for i in range(1, 4)]
+    [Input(f'gama_r_{i}', 'value') for i in range(1, 4)],
+    Input('z-1', 'value'),
+    Input('z-2', 'value'),
+    Input('z-3', 'value'),
+    Input('h-1', 'value'),
+    Input('h-3', 'value')
 )
-def update_gamma_prime(gama_r1, gama_r2, gama_r3):
+def update_gamma_prime(gama_r1, gama_r2, gama_r3, z1, z2, z3, h1, h3 ):
     # Calculate γ′ as γ_r - 9.81 for each layer
-    gama_prime1 = round(gama_r1 - 9.81, 2) if gama_r1 is not None else None
-    gama_prime2 = round(gama_r2 - 9.81, 2) if gama_r2 is not None else None
-    gama_prime3 = round(gama_r3 - 9.81, 2) if gama_r3 is not None else None
+    gama_prime1 = round(gama_r1 - 10, 2) if gama_r1 is not None else None
+    if (h1 + z2 + z3) > h3:
+        gama_prime2 = round((gama_r2 - 10) - (abs((h1 + z2 + z3) - h3)/z2)*10 , 2) if gama_r2 is not None else None
+    elif (h1 + z2 + z3) < h3:
+        gama_prime2 = round((gama_r2 - 10) + (abs((h1 + z2 + z3) - h3)/z2)*10 , 2) if gama_r2 is not None else None
+    else:
+        gama_prime2 = round(gama_r2 - 10 , 2) if gama_r2 is not None else None
+    gama_prime3 = round(gama_r3 - 10, 2) if gama_r3 is not None else None
     
     return gama_prime1, gama_prime2, gama_prime3
 
@@ -168,11 +179,11 @@ def update_layout(window_width):
     if window_width is not None and window_width < 700:
         # Stack graphs and controls vertically for narrow screens
         graph_style = {'display': 'flex', 'flexDirection': 'raw', 'alignItems': 'center', 'width': '100%'}
-        control_style = {'width': '100%', 'padding': '10px'}
+        control_style = {'width': '100%', 'padding': '3%'}
     else:
         # Display sliders on the left and graphs on the right for wider screens
         graph_style = {'display': 'flex', 'flexDirection': 'raw', 'width': '75%', 'gap': '0px'}
-        control_style = {'width': '25%', 'padding': '10px'}
+        control_style = {'width': '25%', 'padding': '1%'}
     
     return graph_style, control_style
 
@@ -374,7 +385,6 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             effective_stress[i] = total_stress[i] - pore_pressure[i]
             
         else:
-
             if (h1 + z2 + z3) == h3:
                 pore_pressure[i] = (depth - (z1 - h1)) * gamma_water
                 total_stress[i] = total_stress[int((z1 + z2)/step)]+ (depth - z1 - z2) * gama_r_3

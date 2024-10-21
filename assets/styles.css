@@ -26,7 +26,7 @@ h1 {
 
 
 .layer-properties {
-    margin: 2%;
+    margin: 1%;
 
 }
 
@@ -39,9 +39,9 @@ h1 {
 
 .graph-container {
     background-color: #1777d185;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    border-radius: 1%;
+    box-shadow: 0px 4px 8px rgba(133, 25, 25, 0.1);
+    padding: 0.5%;
 }
 
 .logo {
@@ -58,7 +58,7 @@ h1 {
 
     #control-container {
         width: 100%;
-        margin-bottom: 20px;
+        margin-bottom: 1%;
     }
 
     .slider-container {
