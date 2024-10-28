@@ -76,33 +76,39 @@ app.layout = html.Div([
             ]),
 
             # Properties for each layer
-            html.Div(className='layer-properties',  children=[
-                # Layer 1 Properties
-                html.H3('Layer 1', style={'textAlign': 'left'}),
-                html.Label([f'γ (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_1', type='number', value=18, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_r_1', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ′ (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_prime_1', type='number', value=None, step=0.01, style={'width': '12%'}, className='input-field', readOnly=True),
+        html.Div(className='layer-properties', children=[
+            # Layer 1 Properties
+            html.H3('Layer 1', style={'textAlign': 'left'}),
+            html.Label([f'γ (kN/m³)'], className='input-label'),
+            dcc.Input(id='gama_1', type='number', value=18, step=0.01, style={'width': '12%'}, className='input-field'),
+            html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
+            dcc.Input(id='gama_r_1', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
+            html.Div(style={'display': 'flex', 'alignItems': 'center', 'whiteSpace': 'nowrap'}, children=[
+                html.Label([f'γ′ ='], className='input-label', style={'marginRight': '5px'}),
+                html.Div(id='gama_prime_1', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  # Display result as text
+            ]),
 
-                # Layer 2 Properties
-                html.H3('Layer 2', style={'textAlign': 'left'}),
-                html.Label([f'γ (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_2', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_r_2', type='number', value=21, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ* (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_prime_2', type='number', value=None, step=0.01, style={'width': '12%'}, className='input-field', readOnly=True),
+            # Layer 2 Properties
+            html.H3('Layer 2', style={'textAlign': 'left'}),
+            html.Label([f'γ (kN/m³)'], className='input-label'),
+            dcc.Input(id='gama_2', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
+            html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
+            dcc.Input(id='gama_r_2', type='number', value=21, step=0.01, style={'width': '12%'}, className='input-field'),
+            html.Div(style={'display': 'flex', 'alignItems': 'center', 'whiteSpace': 'nowrap'}, children=[
+                html.Label([f'γ* ='], className='input-label', style={'marginRight': '5px'}),
+                html.Div(id='gama_prime_2', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  # Display result as text
+            ]),
 
-                # Layer 3 Properties
-                html.H3('Layer 3', style={'textAlign': 'left'}),
-                html.Label([f'γ (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_3', type='number', value=18, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_r_3', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
-                html.Label([f'γ′ (kN/m³)'], className='input-label'),
-                dcc.Input(id='gama_prime_3', type='number', value=None, step=0.01, style={'width': '12%'}, className='input-field', readOnly=True),
+            # Layer 3 Properties
+            html.H3('Layer 3', style={'textAlign': 'left'}),
+            html.Label([f'γ (kN/m³)'], className='input-label'),
+            dcc.Input(id='gama_3', type='number', value=18, step=0.01, style={'width': '12%'}, className='input-field'),
+            html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
+            dcc.Input(id='gama_r_3', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
+            html.Div(style={'display': 'flex', 'alignItems': 'center', 'whiteSpace': 'nowrap'}, children=[
+                html.Label([f'γ′ ='], className='input-label', style={'marginRight': '5px'}),
+                html.Div(id='gama_prime_3', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  # Display result as text
+            ]),
 
                 # equations
                 html.H3(children=[f'γ′  = γ', html.Sub('r'),  ' - γ', html.Sub('w')], style={'textAlign': 'left'}),
@@ -136,7 +142,7 @@ app.layout = html.Div([
 
 # Callback to update γ′ based on γ_r values for each layer
 @app.callback(
-    [Output(f'gama_prime_{i}', 'value') for i in range(1, 4)],
+    [Output(f'gama_prime_{i}', 'children') for i in range(1, 4)],
     [Input(f'gama_r_{i}', 'value') for i in range(1, 4)],
     Input('z-1', 'value'),
     Input('z-2', 'value'),
@@ -147,15 +153,15 @@ app.layout = html.Div([
 def update_gamma_prime(gama_r1, gama_r2, gama_r3, z1, z2, z3, h1, h3 ):
     # Calculate γ′ as γ_r - 9.81 for each layer
     gama_prime1 = round(gama_r1 - 10, 2) if gama_r1 is not None else None
-    if (h1 + z2 + z3) > h3:
-        gama_prime2 = round((gama_r2 - 10) - (abs((h1 + z2 + z3) - h3)/z2)*10 , 2) if gama_r2 is not None else None
-    elif (h1 + z2 + z3) < h3:
-        gama_prime2 = round((gama_r2 - 10) + (abs((h1 + z2 + z3) - h3)/z2)*10 , 2) if gama_r2 is not None else None
+    if (h1 + z2 + z3) > h3 and z2!=0:
+        gama_prime2 = round((gama_r2 - 10) + (abs((h1 + z2 + z3) - max(h3,z3))/z2)*10 , 2) if gama_r2 is not None else None
+    elif (h1 + z2 + z3) < h3 and z2!=0:
+        gama_prime2 = round((gama_r2 - 10) - (abs((h1 + z2 + z3) - max(h3,z3))/z2)*10 , 2) if gama_r2 is not None else None
     else:
         gama_prime2 = round(gama_r2 - 10 , 2) if gama_r2 is not None else None
     gama_prime3 = round(gama_r3 - 10, 2) if gama_r3 is not None else None
     
-    return gama_prime1, gama_prime2, gama_prime3
+    return f"{gama_prime1} kN/m³", f"{gama_prime2} kN/m³", f"{gama_prime3} kN/m³"
 
 
 
@@ -178,13 +184,12 @@ app.clientside_callback(
 def update_layout(window_width):
     if window_width is not None and window_width < 700:
         # Stack graphs and controls vertically for narrow screens
-        graph_style = {'display': 'flex', 'flexDirection': 'raw', 'alignItems': 'center', 'width': '100%'}
+        graph_style = {'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center', 'width': '100%'}
         control_style = {'width': '100%', 'padding': '3%'}
     else:
-        # Display sliders on the left and graphs on the right for wider screens
-        graph_style = {'display': 'flex', 'flexDirection': 'raw', 'width': '75%', 'gap': '0px'}
+        # Arrange horizontally for wider screens
+        graph_style = {'display': 'flex', 'flexDirection': 'row', 'width': '75%', 'gap': '0px'}
         control_style = {'width': '25%', 'padding': '1%'}
-    
     return graph_style, control_style
 
 @app.callback(
@@ -209,26 +214,30 @@ def update_h1_max(z1_value, h1_value):
     Input('h-3', 'value'),
     Input('gama_1', 'value'),
     Input('gama_r_1', 'value'),
-    Input('gama_prime_1', 'value'),
     Input('gama_2', 'value'),
     Input('gama_r_2', 'value'),
-    Input('gama_prime_2', 'value'),
     Input('gama_3', 'value'),
-    Input('gama_r_3', 'value'),
-    Input('gama_prime_3', 'value')
+    Input('gama_r_3', 'value')
     
 )
-def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, gama_r_2, gama_prime_2, gama_3, gama_r_3, gama_prime_3):
+def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_3, gama_r_3):
 
     # Define soil layers and their boundaries with specified patterns
     layers = [
-        {'layer_id': '1', 'name': 'Sand', 'top': 0, 'bottom': z1, 'color': 'rgb(244,164,96)','fillpattern': {'shape': '.'}, 'x0': -0.2, 'h':h1, 'text':'h\u2081'},  # Dots for Sand
-        {'layer_id': '2', 'name': 'Clay', 'top': z1, 'bottom': z1 + z2, 'color': 'rgb(139,69,19)','fillpattern': {'shape': ''}, 'x0': 0},  # Dashes for Clay
-        {'layer_id': '3', 'name': 'Sand', 'top': z1 + z2, 'bottom': z1 + z2 + z3, 'color': 'rgb(244,164,96)','fillpattern': {'shape': '.'}, 'x0': -0.70, 'h':h3, 'text':'h\u2083'},  # Dots for Sand
+        {'layer_id': '1', 'name': 'Sand', 'top': 0, 'bottom': z1, 'color': 'rgb(244,164,96)','fillpattern': {'shape': '.'}, 
+         'x0': -0.2, 'h':h1, 'text':'h\u2081'
+         },  # Dots for Sand
+        {'layer_id': '2', 'name': 'Clay', 'top': z1, 'bottom': z1 + z2, 'color': 'rgb(139,69,19)',
+         'fillpattern': {'shape': ''}, 'x0': 0
+         },  # Dashes for Clay
+        {'layer_id': '3', 'name': 'Sand', 'top': z1 + z2, 'bottom': z1 + z2 + z3, 'color': 'rgb(244,164,96)',
+         'fillpattern': {'shape': '.'}, 'x0': -0.70, 'h':h3, 'text':'h\u2083'
+         },  # Dots for Sand
     ]
 
     # Create the soil layers figure (139,69,19)
     soil_layers_fig = go.Figure()
+    pressure_fig = go.Figure()
 
     for layer in layers:
         soil_layers_fig.add_trace(go.Scatter(
@@ -241,26 +250,75 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             showlegend=False,
             fillpattern=layer['fillpattern']  # Use the specified fill pattern
         ))
-        
+
+        # Add annotation with an arrow for the clay layer
+        if layer['name'] == 'Clay' and z2!=0:
+            mid_depth = (layer['top'] + layer['bottom']) / 2  # Midpoint of the layer
+            layer_thickness = layer['bottom'] - layer['top']  # Thickness of the clay layer
+            arrow_length = layer_thickness * 0.3  # Set arrow length to 30% of the layer thickness
+            
+            # Determine the arrow direction and text based on h1 and h3
+            if (h1 + z2 + z3) < h3:
+                arrow_y = mid_depth + arrow_length  # Point arrow upwards
+                arrow_text = "- f<sub>s</sub>"
+                show_arrow = True
+            elif (h1 + z2 + z3) > h3:
+                arrow_y = mid_depth - arrow_length  # Point arrow downwards
+                arrow_text = "+ f<sub>s</sub>"
+                show_arrow = True
+            else:
+                arrow_y = mid_depth  # No movement, show static text
+                arrow_text = "Hydrostatic"
+                show_arrow = False
+            
+            # Add the arrow annotation if needed
+            soil_layers_fig.add_annotation(
+                x=-0.1,  # X-coordinate for the arrow's tip
+                y=mid_depth,  # Y-coordinate for the arrow's tip
+                ax=-0.1,  # X-coordinate for the arrow's base
+                ay=arrow_y,  # Y-coordinate for the arrow's base
+                xref='x',
+                yref='y',
+                axref='x',
+                ayref='y',
+                text=arrow_text,  # Annotation text based on the condition
+                showarrow=show_arrow,  # Show or hide the arrow based on the condition
+                arrowhead=3,  # Style of the arrowhead
+                arrowsize=2,  # Make the arrow wider
+                arrowwidth=2,  # Increase the width of the arrow line
+                arrowcolor='red',  # Color of the arrow
+                font=dict(size=18, color="red", weight="bold"),  # Font style for the annotation
+                align='center'
+            )
+
         # Add a line at the top and bottom of each layer
         soil_layers_fig.add_trace(go.Scatter(
-        x=[-1, 1],  # Start at -1 and end at 1
-        y=[layer['top'], layer['top']],  # Horizontal line at the top of the layer
-        mode='lines',
-        line=dict(color='black', width=1, dash='dash'),
-        showlegend=False  # Hide legend for these lines
+            x=[-1, 1],  # Start at -1 and end at 1
+            y=[layer['top'], layer['top']],  # Horizontal line at the top of the layer
+            mode='lines',
+            line=dict(color='black', width=1, dash='dash'),
+            showlegend=False  # Hide legend for these lines
+        ))
+        
+        # Add a line at the bottom of each layer
+        pressure_fig.add_trace(go.Scatter(
+            x=[0, 1000],  # Start at -1 and end at 1
+            y=[layer['top'], layer['top']],  # Horizontal line at the top of the layer
+            mode='lines',
+            line=dict(color='black', width=1, dash='dash'),
+            showlegend=False  # Hide legend for these lines
         ))
 
         # Add the annotation for the layer name
         mid_depth = (layer['top'] + layer['bottom']) / 2  # Midpoint of the layer
         soil_layers_fig.add_annotation(
-        x=0.6,  # Position the text slightly to the right of the layer box
-        y=mid_depth,
-        text=layer['name'],  # Layer name as text
-        showarrow=False,  # Don't show an arrow
-        font=dict(size=14, color="black"),
-        xanchor='left',  # Anchor text to the left
-        yanchor='middle'  # Center text vertically with the midpoint
+            x=0.6,  # Position the text slightly to the right of the layer box
+            y=mid_depth,
+            text=layer['name'],  # Layer name as text
+            showarrow=False,  # Don't show an arrow
+            font=dict(size=14, color="black"),
+            xanchor='left',  # Anchor text to the left
+            yanchor='middle'  # Center text vertically with the midpoint
         )
 
         # Add the filled rectangle shape
@@ -278,6 +336,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
                     fillcolor='lightskyblue',  # Fill color for the rectangle
                 )
             
+            
+            
             if (layer['bottom'] - layer['h']) < 0:
                 y_top = layer['bottom'] - layer['h'] -1
             else:
@@ -288,7 +348,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             y=[layer['bottom'], y_top],  
             mode='lines',
             line=dict(color='black', width=3, dash='solid'),
-            showlegend=False  # Hide legend for these lines
+            showlegend=False,  # Hide legend for these lines
+            hoverinfo='skip'
             ))
 
             # Add a line at right of Piezometer
@@ -297,7 +358,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             y=[layer['bottom'], y_top],  
             mode='lines',
             line=dict(color='black', width=3, dash='solid'),
-            showlegend=False  # Hide legend for these lines
+            showlegend=False,  # Hide legend for these lines
+            hoverinfo='skip'
             ))
 
             # Add the annotation (text label) at the top of the rectangle
@@ -313,6 +375,7 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
                 xanchor='center',  # Center the text horizontally
                 yanchor='bottom'   # Anchor the text to the bottom
             )
+    
 
     soil_layers_fig.update_layout(
         title=dict(
@@ -333,7 +396,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             zeroline=False),
         yaxis_title='Depth (m)',
         yaxis=dict(
-            autorange='reversed', 
+            # autorange='reversed', 
+            range=[z1 + z2 + z3, y_top],    
             # range=[0, z1+z2+z3],  # Reverse y-axis
             showticklabels=True,
             ticks='outside',
@@ -346,7 +410,7 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
     )
 
     # Calculate pore water pressure based on conditions
-    step = 0.01
+    step = 0.05
     depths = np.linspace(0, z1 + z2 + z3, num=int((z1 + z2 + z3)/step) + 1, endpoint=True)  # Define depths from 0 to total depth
     total_stress = np.zeros_like(depths)
     pore_pressure = np.zeros_like(depths)
@@ -370,17 +434,19 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             if (h1 + z2 + z3) == h3:
                 pore_pressure[i] = (depth - (z1 - h1)) * gamma_water
                 total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
-            elif (h1 + z2 + z3) > h3:
-                pore_pressure[i] = ((1 - abs(((z2 + z3 + h1) - h3)/z2)) * gamma_water * (depth - z1)) + pore_pressure[int(z1/step)]
-                if h3 < (z2 + z3):
+            elif (h1 + z2 + z3) > h3: # if h1>h3
+                
+                if h3 <= (z2 + z3):
+                    pore_pressure[i] = ((1 - abs(((h1 + z2 + z3) - z3)/z2)) * gamma_water * (depth - z1)) + pore_pressure[int(z1/step)]
                     if depth <= (z1+z2+z3-h3):
                         total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_2
                     else:
                         total_stress[i] = total_stress[int(z1/step)] + (depth - (z1+z2+z3-h3)) * gama_r_2 + (z2+z3-h3) * gama_2
                 else:
+                    pore_pressure[i] = ((1 - abs(((h1 + z2 + z3) - h3)/z2)) * gamma_water * (depth - z1)) + pore_pressure[int(z1/step)]
                     total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
-            else:
-                pore_pressure[i] = ((1 + abs(((z2 + z3 + h1) - h3)/z2)) * gamma_water * (depth - z1))  + pore_pressure[int(z1/step)]
+            else:  # if h1<h3
+                pore_pressure[i] = ((1 + abs(((h1 + z2 + z3) - h3)/z2)) * gamma_water * (depth - z1))  + pore_pressure[int(z1/step)]
                 total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
             effective_stress[i] = total_stress[i] - pore_pressure[i]
             
@@ -406,7 +472,7 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
 
 
     # Create the pore pressure figure
-    pressure_fig = go.Figure()
+
     pressure_fig.add_trace(go.Scatter(
         x=total_stress,
         y=depths,
@@ -432,17 +498,13 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
     ))
 
     pressure_fig.update_layout(
-    title=dict(
-        text=None,
-        x=0.5,  # Center the title horizontally
-        y=0.98,  # Position the title above the plot area
-        xanchor='center',
-        yanchor='top',
-        font=dict(size=20)  # Adjust the font size as needed
-        ),
-        xaxis_title='Stress/Pressure (kPa)',
+        xaxis_title=dict(text='Stress/Pressure (kPa)', font=dict(size=20)),
         plot_bgcolor='white',
         xaxis = dict(
+            range = [                
+                np.min([total_stress.min(), effective_stress.min(), pore_pressure.min()]),
+                np.max([total_stress.max(), effective_stress.max(), pore_pressure.max()])
+            ], 
             side = 'top',
             zeroline=False,
             showticklabels=True,
@@ -454,13 +516,14 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             linecolor='black',
             showgrid=True,
             gridwidth=1, 
-            gridcolor='grey',
+            gridcolor='lightgrey',
             mirror = True
             
             ),
         yaxis_title='Depth (m)',
         yaxis=dict(
-            autorange='reversed',
+            # autorange='reversed',
+            range=[z1 + z2 + z3, y_top],   
             zeroline=False,
             showticklabels=True,
             ticks='outside',
@@ -471,7 +534,7 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_prime_1, gama_2, ga
             linecolor='black',
             showgrid=True,
             gridwidth=1, 
-            gridcolor='grey',
+            gridcolor='lightgrey',
             mirror = True
 
 
