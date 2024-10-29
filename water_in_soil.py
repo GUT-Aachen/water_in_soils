@@ -7,8 +7,6 @@ import plotly.graph_objs as go
 
 app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
 
-# Add a hidden dcc.Store to track the window width
-# Updated layout with separate sections for sliders and layer properties
 # Updated layout with sliders on top and layer properties below
 app.layout = html.Div([
     dcc.Store(id='window-width'),
@@ -54,7 +52,7 @@ app.layout = html.Div([
                     className='slider', tooltip={'placement': 'bottom', 'always_visible': True}
                 ),
 
-                # Layer 1 depth slider
+                # Layer 1 h slider
                 html.Label(children=[
                     'h', html.Sub('1'), ' (m)'
                 ], className='slider-label'),
@@ -64,13 +62,13 @@ app.layout = html.Div([
                     className='slider', tooltip={'placement': 'bottom', 'always_visible': True}
                 ),
 
-                # Layer 3 depth slider
+                # Layer 3 h slider
                 html.Label(children=[
                     'h', html.Sub('3'), ' (m)'
                 ], className='slider-label'),
                 dcc.Slider(
                     id='h-3', min=0, max=25, step=0.25, value=6.5,
-                    marks={i: f'{i}' for i in range(0, 31, 5)},
+                    marks={i: f'{i}' for i in range(0, 101, 5)},
                     className='slider', tooltip={'placement': 'bottom', 'always_visible': True}
                 ),
             ]),
@@ -79,7 +77,7 @@ app.layout = html.Div([
         html.Div(className='layer-properties', children=[
             # Layer 1 Properties
             html.H3('Layer 1', style={'textAlign': 'left'}),
-            html.Label([f'γ (kN/m³)'], className='input-label'),
+            html.Label([f'γ', html.Sub('d'),' (kN/m³)' ], className='input-label'),
             dcc.Input(id='gama_1', type='number', value=18, step=0.01, style={'width': '12%'}, className='input-field'),
             html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
             dcc.Input(id='gama_r_1', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
@@ -90,7 +88,7 @@ app.layout = html.Div([
 
             # Layer 2 Properties
             html.H3('Layer 2', style={'textAlign': 'left'}),
-            html.Label([f'γ (kN/m³)'], className='input-label'),
+            html.Label([f'γ', html.Sub('d'),' (kN/m³)'], className='input-label'),
             dcc.Input(id='gama_2', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
             html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
             dcc.Input(id='gama_r_2', type='number', value=21, step=0.01, style={'width': '12%'}, className='input-field'),
@@ -101,7 +99,7 @@ app.layout = html.Div([
 
             # Layer 3 Properties
             html.H3('Layer 3', style={'textAlign': 'left'}),
-            html.Label([f'γ (kN/m³)'], className='input-label'),
+            html.Label([f'γ', html.Sub('d'),' (kN/m³)'], className='input-label'),
             dcc.Input(id='gama_3', type='number', value=18, step=0.01, style={'width': '12%'}, className='input-field'),
             html.Label([f'γ', html.Sub('r'), ' (kN/m³)'], className='input-label'),
             dcc.Input(id='gama_r_3', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
@@ -194,14 +192,22 @@ def update_layout(window_width):
 
 @app.callback(
     Output('h-1', 'max'),
+    Output('h-3', 'max'),
     Input('z-1', 'value'),
-    Input('h-1', 'value')
+    Input('z-2', 'value'),
+    Input('z-3', 'value'),
+    Input('h-1', 'value'),
+    Input('h-3', 'value')
 )
-def update_h1_max(z1_value, h1_value):
+def update_h1_max(z1_value, z2_value, z3_value, h1_value, h3_value):
     if z1_value >= -h1_value:
-        return z1_value
+        h1_max = z1_value
     else:
-        return 20  
+        h1_max = 20
+    h3_max = (1 + 0.5) * (z1_value + z2_value + z3_value)
+
+    return h1_max, h3_max
+
 
 # Callback to handle the animations and input updates
 @app.callback(
@@ -300,7 +306,7 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
             showlegend=False  # Hide legend for these lines
         ))
         
-        # Add a line at the bottom of each layer
+        # Add a line at the bottom of each layer other graph
         pressure_fig.add_trace(go.Scatter(
             x=[0, 1000],  # Start at -1 and end at 1
             y=[layer['top'], layer['top']],  # Horizontal line at the top of the layer
@@ -435,16 +441,11 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
                 pore_pressure[i] = (depth - (z1 - h1)) * gamma_water
                 total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
             elif (h1 + z2 + z3) > h3: # if h1>h3
-                
-                if h3 <= (z2 + z3):
-                    pore_pressure[i] = ((1 - abs(((h1 + z2 + z3) - z3)/z2)) * gamma_water * (depth - z1)) + pore_pressure[int(z1/step)]
-                    if depth <= (z1+z2+z3-h3):
-                        total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_2
-                    else:
-                        total_stress[i] = total_stress[int(z1/step)] + (depth - (z1+z2+z3-h3)) * gama_r_2 + (z2+z3-h3) * gama_2
+                if h3 <  z3:
+                    pore_pressure[i] = ((1 - abs((h1 + z2 )/z2)) * gamma_water * (depth - z1)) + pore_pressure[int(z1/step)]
                 else:
                     pore_pressure[i] = ((1 - abs(((h1 + z2 + z3) - h3)/z2)) * gamma_water * (depth - z1)) + pore_pressure[int(z1/step)]
-                    total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
+                total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
             else:  # if h1<h3
                 pore_pressure[i] = ((1 + abs(((h1 + z2 + z3) - h3)/z2)) * gamma_water * (depth - z1))  + pore_pressure[int(z1/step)]
                 total_stress[i] = total_stress[int(z1/step)] + (depth - z1) * gama_r_2
@@ -489,6 +490,7 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
         name='Pore Water Pressure'
     ))
 
+
     pressure_fig.add_trace(go.Scatter(
         x=effective_stress,
         y=depths,
@@ -496,6 +498,24 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
         line=dict(color='green', width=3 ),
         name='Effective Vertical Stress'
     ))
+
+    pressure_fig.add_trace(go.Scatter(
+        x=(0, (h1 + z2 + z3) * gamma_water),
+        y=(z1 - h1 , z1 + z2 + z3),
+        mode='lines',
+        line=dict(color='black', width=1, dash='dash' ),
+        name='h1_hydrostatic'
+    ))
+
+    pressure_fig.add_trace(go.Scatter(
+        x=(0, h3 * gamma_water),
+        y=(z1 +z2 + z3 - h3 , z1 + z2 + z3),
+        mode='lines',
+        line=dict(color='black', width=1, dash='dash' ),
+        name='h3_hydrostatic'
+    ))
+
+
 
     pressure_fig.update_layout(
         xaxis_title=dict(text='Stress/Pressure (kPa)', font=dict(size=20)),
