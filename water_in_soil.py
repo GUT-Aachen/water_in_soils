@@ -504,7 +504,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
         y=(z1 - h1 , z1 + z2 + z3),
         mode='lines',
         line=dict(color='black', width=1, dash='dash' ),
-        name='h1_hydrostatic'
+        name='h1_hydrostatic',
+        showlegend=False  # Hide legend for this trace
     ))
 
     pressure_fig.add_trace(go.Scatter(
@@ -512,7 +513,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
         y=(z1 +z2 + z3 - h3 , z1 + z2 + z3),
         mode='lines',
         line=dict(color='black', width=1, dash='dash' ),
-        name='h3_hydrostatic'
+        name='h3_hydrostatic',
+        showlegend=False  # Hide legend for this trace
     ))
 
 
