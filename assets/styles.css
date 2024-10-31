@@ -7,6 +7,11 @@ body {
     overflow-x: hidden;
 }
 
+/* Add this to your CSS file */
+.dash-interval {
+    display: none; /* Hide the updating message */
+}
+
 h1 {
     color: #00549f;
     text-align: center;

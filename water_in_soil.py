@@ -8,6 +8,9 @@ import plotly.graph_objs as go
 
 app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
 
+app.title = 'Water in Soils'
+app._favicon = ('assets/favicon.ico')
+
 # Updated layout with sliders on top and layer properties below
 app.layout = html.Div([
     dcc.Store(id='window-width'),
@@ -109,7 +112,7 @@ app.layout = html.Div([
                     html.Label([f'γ′', 
                                 html.Div(className='tooltip', children=[
                                     html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
-                                    html.Span('Effective unit weight of Sand-1', className='tooltiptext')
+                                    html.Span('Submerged unit weight of Sand-1', className='tooltiptext')
                                 ])], className='input-label', style={'marginRight': '5px'}),
                     html.Div(id='gama_prime_1', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  
                 ]),
@@ -148,20 +151,20 @@ app.layout = html.Div([
                 html.Label([f'γ', html.Sub('sat'), 
                             html.Div(className='tooltip', children=[
                                 html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
-                                html.Span('Saturated unit weight of of Sand-2', className='tooltiptext')
+                                html.Span('Saturated unit weight of Sand-2', className='tooltiptext')
                             ]),' (kN/m³)'], className='input-label'),
                 dcc.Input(id='gama_r_3', type='number', value=19, step=0.01, style={'width': '12%'}, className='input-field'),
                 html.Div(style={'display': 'flex', 'alignItems': 'center', 'whiteSpace': 'nowrap'}, children=[
                     html.Label([f'γ′', 
                                 html.Div(className='tooltip', children=[
                                     html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
-                                    html.Span('Effective unit weight of of Sand-2', className='tooltiptext')
+                                    html.Span('submerged unit weight of Sand-2', className='tooltiptext')
                                 ])], className='input-label', style={'marginRight': '5px'}),
                     html.Div(id='gama_prime_3', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  
                 ]),
 
                 # equations
-                html.H3(children=[f'γ′  = γ', html.Sub('r'),  ' - γ', html.Sub('w')], style={'textAlign': 'left'}),
+                html.H3(children=[f'γ′  = γ', html.Sub('sat'),  ' - γ', html.Sub('w')], style={'textAlign': 'left'}),
                 html.H3(children=[f'γ*  = γ′ ± (Δh/ΔL)γ', html.Sub('w')], style={'textAlign': 'left'}),
 
             ]),
