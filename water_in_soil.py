@@ -158,7 +158,7 @@ app.layout = html.Div([
                     html.Label([f'γ′', 
                                 html.Div(className='tooltip', children=[
                                     html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
-                                    html.Span('submerged unit weight of Sand-2', className='tooltiptext')
+                                    html.Span('Submerged unit weight of Sand-2', className='tooltiptext')
                                 ])], className='input-label', style={'marginRight': '5px'}),
                     html.Div(id='gama_prime_3', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  
                 ]),
