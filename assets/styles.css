@@ -24,15 +24,55 @@ h1 {
     margin-left: 1%;
 }
 
-
 .layer-properties {
     margin: 1%;
-
 }
 
-.input-label{
+.input-label {
     margin: 2%;
+}
 
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 150px; /* Width of the tooltip */
+    background-color: #00559fad; /* Background color */
+    color: #fff; /* Text color */
+    text-align: center;
+    font-family: 'Arial', sans-serif; /* Font family */
+    font-size: 14px; /* Font size */
+    font-weight: 400; /* Font weight (400 is regular) */
+    line-height: 1.4; /* Line height for readability */
+    border-radius: 6px; /* Rounded corners */
+    padding: 5%; /* Padding inside the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 0%;
+    left: 105%; /* Position it slightly to the right of the icon */
+    transform: translateY(-50%);
+    opacity: 0; /* Start as hidden */
+    transition: opacity 0.3s; /* Fade effect */
+    white-space: wrap; /* Prevent text wrap */
+}
+
+/* Info icon */
+.info-icon {
+    width: 15px; /* Width of the icon */
+    height: 15px; /* Height of the icon */
+    margin-left: 2px; /* Space between label and icon */
+}
+
+/* Show the tooltip on hover */
+.tooltip:hover .tooltiptext {
+    visibility: visible; /* Show tooltip */
+    opacity: 1; /* Make it visible */
 }
 
 
@@ -48,7 +88,6 @@ h1 {
     margin-top: 0.5%;
     margin-left: 4%;
 }
-
 
 /* Responsive layout for narrow screens */
 @media screen and (max-width: 700px) {
