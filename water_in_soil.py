@@ -22,7 +22,7 @@ app.layout = html.Div([
     html.Div(style={'display': 'flex', 'flexDirection': 'row', 'width': '100%', 'height': '100vh'}, children=[
         # Control container (sliders)
         html.Div(id='control-container', style={'width': '30%', 'padding': '2%', 'flexDirection': 'column'}, children=[
-            html.H1('Water in Soils', style={'textAlign': 'center'}, className='h1'),
+            html.H1('Water in Soils', className='h1'),
 
             # Sliders for each layer
             html.Div(className='slider-container', children=[
@@ -114,7 +114,7 @@ app.layout = html.Div([
                                     html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
                                     html.Span('Submerged unit weight of Sand-1', className='tooltiptext')
                                 ])], className='input-label', style={'marginRight': '5px'}),
-                    html.Div(id='gama_prime_1', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  
+                    html.Div(id='gama_prime_1', className='input-field')  
                 ]),
 
                 # Layer 2 Properties
@@ -137,7 +137,7 @@ app.layout = html.Div([
                                     html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
                                     html.Span('Effective unit weight of Clay under flow condition', className='tooltiptext')
                                 ])], className='input-label', style={'marginRight': '5px'}),
-                    html.Div(id='gama_prime_2', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  
+                    html.Div(id='gama_prime_2', className='input-field')  
                 ]),
 
                 # Layer 3 Properties
@@ -160,12 +160,12 @@ app.layout = html.Div([
                                     html.Img(src='/assets/info-icon.png', className='info-icon', alt='Info'), 
                                     html.Span('Submerged unit weight of Sand-2', className='tooltiptext')
                                 ])], className='input-label', style={'marginRight': '5px'}),
-                    html.Div(id='gama_prime_3', style={'width': 'auto', 'display': 'inline-block', 'fontWeight': 'bold', 'color': 'red'})  
+                    html.Div(id='gama_prime_3', className='input-field')  
                 ]),
 
                 # equations
-                html.H3(children=[f'γ′  = γ', html.Sub('sat'),  ' - γ', html.Sub('w')], style={'textAlign': 'left'}),
-                html.H3(children=[f'γ*  = γ′ ± (Δh/ΔL)γ', html.Sub('w')], style={'textAlign': 'left'}),
+                html.H3(children=[f'γ′  = γ', html.Sub('sat'),  ' - γ', html.Sub('w')], style={'textAlign': 'left'}, className='h3'),
+                html.H3(children=[f'γ*  = γ′ ± (Δh/ΔL)γ', html.Sub('w')], style={'textAlign': 'left'}, className='h3'),
 
             ]),
         ]),
@@ -322,7 +322,8 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
                 line=dict(width=1, color='black'),
                 name=layer['name'],
                 showlegend=False,
-                fillpattern=layer['fillpattern']  # Use the specified fill pattern
+                fillpattern=layer['fillpattern'],  # Use the specified fill pattern
+                hoverinfo='skip'  # Skip hover info for these traces
             ))
 
             # Add annotation with an arrow for the clay layer
@@ -642,9 +643,18 @@ def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_
             gridwidth=1, 
             gridcolor='lightgrey',
             mirror = True
-
-
             ), 
+        legend=dict(
+            yanchor="top",  # Align the bottom of the legend box
+            y=1,               # Position the legend at the bottom inside the plot
+            xanchor="right",    # Align the right edge of the legend box
+            x=1,               # Position the legend at the right inside the plot
+            font= dict(size=10),  # Adjust font size
+            bgcolor="rgba(255, 255, 255, 0.7)",  # Optional: Semi-transparent white background
+            bordercolor="black",                 # Optional: Border color
+            borderwidth=1                        # Optional: Border width
+            
+        ),
     )
 
     return soil_layers_fig, pressure_fig
