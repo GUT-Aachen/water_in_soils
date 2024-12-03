@@ -1,7 +1,7 @@
 import os
 import dash
 from dash import dcc, html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import numpy as np
 import plotly.graph_objs as go
 
@@ -23,6 +23,9 @@ app.layout = html.Div([
         # Control container (sliders)
         html.Div(id='control-container', style={'width': '30%', 'padding': '2%', 'flexDirection': 'column'}, children=[
             html.H1('Water in Soils', className='h1'),
+            
+            # Add the update button
+            html.Button("Update Graphs", id='update-button', n_clicks=0, style={'width': '100%', 'height': '5vh', 'marginBottom': '1vh'}),
 
             # Sliders for each layer
             html.Div(className='slider-container', children=[
@@ -274,20 +277,21 @@ def update_h1_max(z1_value, z2_value, z3_value, h1_value, h3_value):
 @app.callback(
     Output('soil-layers-graph', 'figure'),
     Output('pore-pressure-graph', 'figure'),
-    Input('z-1', 'value'),
-    Input('z-2', 'value'),
-    Input('z-3', 'value'),
-    Input('h-1', 'value'),
-    Input('h-3', 'value'),
-    Input('gama_1', 'value'),
-    Input('gama_r_1', 'value'),
-    Input('gama_2', 'value'),
-    Input('gama_r_2', 'value'),
-    Input('gama_3', 'value'),
-    Input('gama_r_3', 'value')
+    Input('update-button', 'n_clicks'),
+    State('z-1', 'value'),
+    State('z-2', 'value'),
+    State('z-3', 'value'),
+    State('h-1', 'value'),
+    State('h-3', 'value'),
+    State('gama_1', 'value'),
+    State('gama_r_1', 'value'),
+    State('gama_2', 'value'),
+    State('gama_r_2', 'value'),
+    State('gama_3', 'value'),
+    State('gama_r_3', 'value')
     
 )
-def update_graphs(z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_3, gama_r_3):
+def update_graphs(n_clicks, z1, z2, z3, h1, h3, gama_1, gama_r_1, gama_2, gama_r_2,  gama_3, gama_r_3):
     if z1 <= 0:
         h1 = 0
     if z3 <= 0:
