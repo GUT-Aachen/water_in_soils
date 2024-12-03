@@ -281,7 +281,7 @@ def update_h1_max(z1_value, z2_value, z3_value, h1_value, h3_value):
     State('z-1', 'value'),
     State('z-2', 'value'),
     State('z-3', 'value'),
-    Input('h-1', 'value'),
+    State('h-1', 'value'),
     State('h-3', 'value'),
     State('gama_1', 'value'),
     State('gama_r_1', 'value'),
